@@ -38,4 +38,8 @@ public class MemberController {
         return result;
     }
 
+    public Member login(Member member){
+        return null;
+    }
+
 }

@@ -11,5 +11,12 @@ public interface MemberRepository {
      */
     int registerMember(Member meber) throws SQLException;
 
-    public Member findByEmail(String email) throws SQLException;
+    /**
+     * select * from members where email = ?
+     * @param email
+     * @return
+     * @throws SQLException
+     */
+    Member findByEmail(String email) throws SQLException;
+    Member login(Member member);
 }

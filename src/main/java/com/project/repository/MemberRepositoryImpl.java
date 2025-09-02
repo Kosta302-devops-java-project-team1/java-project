@@ -59,4 +59,9 @@ public class MemberRepositoryImpl implements MemberRepository{
         }
         return member;
     }
+
+    @Override
+    public Member login(Member member) {
+        return null;
+    }
 }

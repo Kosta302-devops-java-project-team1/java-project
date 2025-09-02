@@ -26,6 +26,7 @@ public class MenuView {
                 case "1" :
                     break;
                 case "2" :
+
                     break;
                 case "3" :
                     registerMemberView();
@@ -69,6 +70,15 @@ public class MenuView {
         }
         Member member = new Member(email, password);
         memberController.registerMember(member);
+    }
+
+    public void loginView(){
+        System.out.println("이메일 : ");
+        String email = sc.nextLine();
+        System.out.println("비밀번호 : ");
+        String password = sc.nextLine();
+        Member member = new Member(email, password);
+        memberController.login(member);
     }
 
 

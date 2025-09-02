@@ -9,7 +9,7 @@ import java.sql.SQLException;
 
 public class MemberServiceImpl implements MemberService{
     private static final MemberServiceImpl instance = new MemberServiceImpl();
-    private MemberRepository memberRepository = new MemberRepositoryImpl();
+    private final MemberRepository memberRepository = new MemberRepositoryImpl();
     private MemberServiceImpl() {
     }
     public static MemberService getInstance(){
@@ -28,5 +28,10 @@ public class MemberServiceImpl implements MemberService{
     public boolean emailDuplicateChk(String email) throws SQLException {
         Member byEmail = memberRepository.findByEmail(email);
         return byEmail != null;
+    }
+
+    @Override
+    public Member login(Member member) {
+        return null;
     }
 }

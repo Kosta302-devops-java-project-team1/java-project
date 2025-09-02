@@ -16,4 +16,10 @@ public interface MemberService {
      * @throws SQLException
      */
     boolean emailDuplicateChk(String email) throws SQLException;
+
+    /**
+     * id, password로 로그인하는 메서드
+     * @param member
+     */
+    Member login(Member member);
 }
