@@ -4,7 +4,7 @@ out/
 !**/src/test/**/out/
 /.idea
 /src/main/java/com/project/common/DBProperties.java
-
+/resources
 ### Eclipse ###
 .apt_generated
 .classpath
