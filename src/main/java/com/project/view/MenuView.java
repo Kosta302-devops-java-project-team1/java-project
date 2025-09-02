@@ -58,8 +58,6 @@ public class MenuView {
                     return;
             }
         }
-
-
     }
 
     public void adminView(Member member){

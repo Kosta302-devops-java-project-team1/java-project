@@ -4,12 +4,12 @@ import main.java.com.project.dto.Member;
 
 import java.sql.SQLException;
 
-public interface MemberRepository {
+public interface MemberDao {
     /**
      * insert into members(email, password) values(?,?)
      * @throws SQLException
      */
-    int registerMember(Member meber) throws SQLException;
+    int registerMember(Member member) throws SQLException;
 
     /**
      * select * from members where email = ?
