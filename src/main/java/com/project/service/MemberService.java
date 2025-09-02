@@ -2,6 +2,7 @@ package main.java.com.project.service;
 
 import main.java.com.project.dto.Member;
 import main.java.com.project.exception.EmailDuplicateException;
+import main.java.com.project.exception.MemberNotFoundException;
 
 import java.sql.SQLException;
 
@@ -17,9 +18,19 @@ public interface MemberService {
      */
     boolean emailDuplicateChk(String email) throws SQLException;
 
+    boolean passwordChk(Member member, String password);
     /**
      * id, password로 로그인하는 메서드
      * @param member
      */
-    Member login(Member member);
+    Member login(Member member) throws SQLException, MemberNotFoundException;
+
+    /**
+     * SessionSet에서 현제 session 삭제. 즉. 로그아웃메서드
+     * @param member
+     */
+    void logout(Member member);
+
+
+
 }

@@ -61,7 +61,29 @@ public class MemberRepositoryImpl implements MemberRepository{
     }
 
     @Override
-    public Member login(Member member) {
-        return null;
+    public Member login(Member member) throws SQLException{
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        Member login = null;
+        String sql = "select * from members where email = ? and password = ?";
+        try {
+            con = DBManager.getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setString(1, member.getEmail());
+            ps.setString(2, member.getPassword());
+            rs = ps.executeQuery();
+            if(rs.next()){
+                login = new Member(rs.getLong("member_id"),
+                        rs.getString("email"),
+                        rs.getString("password"),
+                        rs.getString("created_at"),
+                        rs.getLong("balance"),
+                        (rs.getInt("is_admin") != 0));
+            }
+        } finally {
+            DBManager.releaseConnection(con, ps, rs);
+        }
+        return login;
     }
 }

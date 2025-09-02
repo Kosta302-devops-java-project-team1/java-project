@@ -18,5 +18,5 @@ public interface MemberRepository {
      * @throws SQLException
      */
     Member findByEmail(String email) throws SQLException;
-    Member login(Member member);
+    Member login(Member member) throws SQLException;
 }

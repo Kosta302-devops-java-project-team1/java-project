@@ -2,6 +2,7 @@ package main.java.com.project.controller;
 
 import main.java.com.project.dto.Member;
 import main.java.com.project.exception.EmailDuplicateException;
+import main.java.com.project.exception.MemberNotFoundException;
 import main.java.com.project.service.MemberService;
 import main.java.com.project.service.MemberServiceImpl;
 import main.java.com.project.view.FailView;
@@ -38,8 +39,28 @@ public class MemberController {
         return result;
     }
 
+    public boolean passwordChk(Member member, String password){
+        return memberService.passwordChk(member, password);
+    }
+
     public Member login(Member member){
-        return null;
+        Member login = null;
+        try {
+            login = memberService.login(member);
+            SuccessView.printMessage("로그인 성공");
+        } catch (SQLException | MemberNotFoundException e) {
+            FailView.errorMessage(e.getMessage());
+        }
+        return login;
+    }
+
+    public void logout(Member member){
+        memberService.logout(member);
+        SuccessView.printMessage(member.getEmail()+"로그아웃");
+    }
+
+    public void updatePassword(Member member, String password){
+
     }
 
 }
