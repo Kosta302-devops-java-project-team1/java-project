@@ -1,11 +1,14 @@
 package main.java.com.project.controller;
 
 import main.java.com.project.dto.Board;
+import main.java.com.project.dto.Member;
+import main.java.com.project.exception.AccessDeniedException;
 import main.java.com.project.service.BoardService;
 import main.java.com.project.service.BoardServiceImpl;
 import main.java.com.project.service.MemberService;
 import main.java.com.project.service.MemberServiceImpl;
 import main.java.com.project.view.FailView;
+import main.java.com.project.view.SuccessView;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -29,6 +32,15 @@ public class BoardController {
             FailView.errorMessage(e.getMessage());
         }
         return list;
+    }
+
+    public void writeBoard(Member member, Board board){
+        try {
+            boardService.writeBoard(member, board);
+            SuccessView.printMessage("게시글이 등록되었습니다.");
+        } catch (SQLException | AccessDeniedException e) {
+            FailView.errorMessage(e.getMessage());
+        }
     }
 
 

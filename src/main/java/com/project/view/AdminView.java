@@ -32,5 +32,9 @@ public class AdminView {
         }
     }
 
+    public void viewEvent(Member member){
+
+    }
+
 
 }

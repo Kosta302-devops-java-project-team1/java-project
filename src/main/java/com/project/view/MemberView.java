@@ -91,6 +91,10 @@ public class MemberView {
         return updateBalance(member.getId(), member.getEmail(), charge);
     }
 
+    public void viewMyReservation(Member member){
+
+    }
+
     private Member updateBalance(long id, String email, long charge){
         Member member = new Member(id, email, null, null, charge, false);
         return memberController.updateBalance(member);

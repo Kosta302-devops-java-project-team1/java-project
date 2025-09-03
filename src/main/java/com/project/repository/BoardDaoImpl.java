@@ -121,6 +121,14 @@ public class BoardDaoImpl implements BoardDao{
         String sql = "insert into boards(member_id, content, event_end_at) values(?, ?, ?)";
         try {
             con = DBManager.getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setLong(1, memberId);
+            ps.setString(2, board.getContent());
+            ps.setString(3, board.getEventEndAt());
+            result = ps.executeUpdate();
+            if(result == 0){
+                throw new SQLException("등록하지 못함");
+            }
         } catch (SQLException e) {
             throw new SQLException("db오류");
         } finally {

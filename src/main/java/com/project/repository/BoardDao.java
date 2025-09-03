@@ -13,5 +13,11 @@ public interface BoardDao {
      */
     List<Board> findNotClosedBoard() throws SQLException;
 
+    /**
+     * 이벤트 글 작성 메서드
+     * @param memberId
+     * @param board
+     * @throws SQLException
+     */
     void insertBoard(long memberId, Board board) throws SQLException;
 }
