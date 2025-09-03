@@ -1,6 +1,7 @@
 package main.java.com.project.repository;
 
 import main.java.com.project.dto.Member;
+import main.java.com.project.exception.MemberNotFoundException;
 
 import java.sql.SQLException;
 
@@ -18,5 +19,8 @@ public interface MemberDao {
      * @throws SQLException
      */
     Member findByEmail(String email) throws SQLException;
+
     Member login(Member member) throws SQLException;
+
+    Member updatePassword(Member member, String password) throws MemberNotFoundException, SQLException;
 }

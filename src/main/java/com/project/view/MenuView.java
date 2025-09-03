@@ -41,19 +41,23 @@ public class MenuView {
     public void memberView(Member member){
         while(true){
             System.out.println("-----"+member.getEmail()+"-----");
-            System.out.println("1.항공편 검색\t2.개인정보수정\t3.예매내역확인\t4.결제내역\t5.로그아웃");
+            System.out.println("1.항공편 검색\t2.개인정보수정\t3.예매내역확인\t4.크레딧충전\t5.결제내역\t6.로그아웃");
             System.out.println("---------------------------------");
             String menu = sc.nextLine();
             switch (menu){
                 case "1" :
                     break;
                 case "2" :
+                    member = updatePassword(member);
                     break;
                 case "3" :
                     break;
                 case "4" :
+
                     break;
                 case "5" :
+                    break;
+                case "6" :
                     logoutView(member);
                     return;
             }
@@ -66,10 +70,16 @@ public class MenuView {
     }
 
     public void registerMemberView(){
+        System.out.println("이메일 : ");
+        System.out.println("0. 뒤로가기");
+        System.out.print(">");
         String email = emailChk();
         if(email.equals("0")){
             return;
         }
+        System.out.println("비밀번호 : ");
+        System.out.println("0. 뒤로가기");
+        System.out.print(">");
         String password = passwordChk();
         if(password.equals("0")){
             return;
@@ -85,6 +95,9 @@ public class MenuView {
         String password = sc.nextLine();
         Member member = new Member(email, password);
         Member login = memberController.login(member);
+        if(login == null){
+            return;
+        }
         if(login.isAdmin()){
             adminView(login);
         }else {
@@ -96,23 +109,44 @@ public class MenuView {
         memberController.logout(member);
     }
 
-    public void updatePassword(Member member){
+    /**
+     * 패스워드 업데이트. 먼저 입력한 패스워드가 현재 패스워드와 맞는지 검증
+     * 이후 변경할 패스워드를 입력받아 db에 update후 sessionSet에 있는 기존 session을 삭제, 새로 받은 객체를 추가
+     * 그리고 memberView의 파라미터 member객체를 업데이트.
+     * @param member
+     * @return
+     */
+    public Member updatePassword(Member member){
         while(true){
             System.out.println("현재 비밀번호를 입력");
             System.out.println("0.뒤로가기");
             System.out.print(">");
             String currentPassword = sc.nextLine();
             if(currentPassword.equals("0")){
-                return;
+                return null;
             }
-            if(memberController.passwordChk(member, currentPassword)){
+            if(memberController.passwordChk(member, currentPassword)){ //현재 패스워드가 맞는지 체크 후 맞으면 break
                 break;
             }
             System.out.println("비밀번호가 맞지 않음");
         }
-        String password = passwordChk();
-        memberController.updatePassword(member, password);
+        System.out.println("변경할 비밀번호를 입력");
+        System.out.println("0.뒤로가기");
+        System.out.print(">");
+        String password = passwordChk(); //비밀번호가 4자리 이상일때 password로 받아옴
+        Member updated = memberController.updatePassword(member, password);// 실제 패스워드 수정후 member객체 받아옴
+        return updated;
     }
+
+    public Member chargeBalance(long id){
+        System.out.println("충전할 금액을 입력하세요");
+        System.out.println(">");
+        long charge = Long.parseLong(sc.nextLine());
+        Member member = new Member(id, null, null, null, charge, false);
+
+        return null;
+    }
+
 
     /**
      * email이 중복인지 혹은 형식에 맞는지 체크하는 메서드
@@ -121,9 +155,6 @@ public class MenuView {
     private String emailChk(){
         String email = null;
         while(true){
-            System.out.println("이메일 : ");
-            System.out.println("0. 뒤로가기");
-            System.out.print(">");
             email = sc.nextLine();
             if(email.equals("0")){
                 return email;
@@ -146,9 +177,6 @@ public class MenuView {
     private String passwordChk(){
         String password = null;
         while(true){
-            System.out.println("비밀번호 : ");
-            System.out.println("0. 뒤로가기");
-            System.out.print(">");
             password = sc.nextLine();
             if(password.equals("0")){
                 return password;
@@ -161,6 +189,11 @@ public class MenuView {
         return password;
     }
 
+    /**
+     * email중복체크
+     * @param email
+     * @return
+     */
     private boolean isValidEmail(String email) {
         if(email == null) return false;
         return EMAIL_PATTERN.matcher(email).matches(); // 전체 일치 체크

@@ -31,6 +31,14 @@ public interface MemberService {
      */
     void logout(Member member);
 
-
+    /**
+     * db에서 password 업데이트 이후 기존에 SessionSet에 있던 Session을 지우고, 업데이트 된 새로운 Session을 추가
+     * @param member
+     * @param password
+     * @return
+     * @throws SQLException
+     * @throws MemberNotFoundException
+     */
+    Member updatePassword(Member member, String password) throws SQLException, MemberNotFoundException;
 
 }

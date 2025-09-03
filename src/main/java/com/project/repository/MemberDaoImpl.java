@@ -2,6 +2,7 @@ package main.java.com.project.repository;
 
 import main.java.com.project.common.DBManager;
 import main.java.com.project.dto.Member;
+import main.java.com.project.exception.MemberNotFoundException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -24,7 +25,7 @@ public class MemberDaoImpl implements MemberDao {
             result = ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new SQLException("등록 실패");
+            throw new SQLException("db오류");
         } finally {
             DBManager.releaseConnection(con, ps);
         }
@@ -52,7 +53,7 @@ public class MemberDaoImpl implements MemberDao {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new SQLException("뭔가 문제가 생김");
+            throw new SQLException("db오류");
         } finally {
             DBManager.releaseConnection(con, ps, rs);
         }
@@ -84,5 +85,30 @@ public class MemberDaoImpl implements MemberDao {
             DBManager.releaseConnection(con, ps, rs);
         }
         return login;
+    }
+
+    @Override
+    public Member updatePassword(Member member, String password) throws MemberNotFoundException, SQLException{
+        Connection con = null;
+        PreparedStatement ps = null;
+        Member updated = null;
+        String sql = "update members set password = ? where member_id = ?";
+
+        try {
+            con = DBManager.getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setString(1, password);
+            ps.setLong(2, member.getId());
+            int result = ps.executeUpdate();
+            if(result == 0){
+                throw new MemberNotFoundException("로그인 상태가 아닌듯..?");
+            }
+            updated = findByEmail(member.getEmail());
+        } catch (SQLException e) {
+            throw new SQLException("db오류");
+        } finally {
+            DBManager.releaseConnection(con, ps);
+        }
+        return updated;
     }
 }

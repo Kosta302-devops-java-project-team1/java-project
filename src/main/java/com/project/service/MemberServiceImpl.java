@@ -57,4 +57,18 @@ public class MemberServiceImpl implements MemberService{
         SessionSet sessionSet = SessionSet.getInstance();
         sessionSet.remove(session);
     }
+
+    @Override
+    public Member updatePassword(Member member, String password) throws SQLException, MemberNotFoundException {
+        Member updated = memberDao.updatePassword(member, password); //
+        Session session = new Session(member.getEmail(), member);
+        SessionSet sessionSet = SessionSet.getInstance();
+        sessionSet.remove(session);
+        session = new Session(updated.getEmail(), updated);
+        sessionSet.add(session);
+        for(Session s : sessionSet.getSet()){
+            System.out.println(s.getSessionMember().getPassword());
+        }
+        return updated;
+    }
 }

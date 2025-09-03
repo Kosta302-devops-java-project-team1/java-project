@@ -59,8 +59,15 @@ public class MemberController {
         SuccessView.printMessage(member.getEmail()+"로그아웃");
     }
 
-    public void updatePassword(Member member, String password){
-
+    public Member updatePassword(Member member, String password){
+        Member updated = null;
+        try {
+            updated = memberService.updatePassword(member, password);
+            SuccessView.printMessage("비밀번호 변경 성공");
+        } catch (SQLException | MemberNotFoundException e) {
+            FailView.errorMessage(e.getMessage());
+        }
+        return updated;
     }
 
 }
