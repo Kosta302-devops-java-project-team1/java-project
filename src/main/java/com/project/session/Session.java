@@ -1,0 +1,54 @@
+package main.java.com.project.session;
+
+import main.java.com.project.dto.Member;
+
+public class Session {
+    private String sessionId;
+    private Member sessionMember; // 사용자 계정정보 session 저장용
+
+    public Session() {
+    }
+
+    public Session(String sessionId, Member member) {
+        this.sessionId = sessionId;
+        this.sessionMember = member;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    public Member getSessionMember() {
+        return sessionMember;
+    }
+
+    public void setSessionMember(Member sessionMember) {
+        this.sessionMember = sessionMember;
+    }
+
+    @Override
+    public String toString() {
+        return "Session{" +
+                "sessionId='" + sessionId + '\'' +
+                '}';
+    }
+
+    @Override
+    public int hashCode() {
+        return sessionId.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        Session other = (Session) obj;
+        if(sessionId.equals(other.sessionId)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+}

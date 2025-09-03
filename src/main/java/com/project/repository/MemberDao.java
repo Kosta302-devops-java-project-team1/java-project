@@ -1,0 +1,29 @@
+package main.java.com.project.repository;
+
+import main.java.com.project.dto.Member;
+import main.java.com.project.exception.InsufficientBalanceException;
+import main.java.com.project.exception.MemberNotFoundException;
+
+import java.sql.SQLException;
+
+public interface MemberDao {
+    /**
+     * insert into members(email, password) values(?,?)
+     * @throws SQLException
+     */
+    int registerMember(Member member) throws SQLException;
+
+    /**
+     * select * from members where email = ?
+     * @param email
+     * @return
+     * @throws SQLException
+     */
+    Member findByEmail(String email) throws SQLException;
+
+    Member login(Member member) throws SQLException;
+
+    Member updatePassword(Member member, String password) throws MemberNotFoundException, SQLException;
+
+    Member updateBalance(Member member) throws SQLException, MemberNotFoundException, InsufficientBalanceException;
+}
