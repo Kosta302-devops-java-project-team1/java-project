@@ -8,6 +8,8 @@ import java.util.regex.Pattern;
 
 public class MenuView {
     MemberController memberController = MemberController.getInstance();
+    AdminView adminView = new AdminView();
+    MemberView memberView = new MemberView();
     Scanner sc = new Scanner(System.in);
     private static final String EMAIL_REGEX = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
     private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
@@ -36,37 +38,6 @@ public class MenuView {
             }
         }
 
-    }
-
-    public void memberView(Member member){
-        while(true){
-            System.out.println("-----"+member.getEmail()+"-----");
-            System.out.println("1.항공편 검색\t2.개인정보수정\t3.예매내역확인\t4.크레딧충전\t5.결제내역\t6.로그아웃");
-            System.out.println("---------------------------------");
-            String menu = sc.nextLine();
-            switch (menu){
-                case "1" :
-                    break;
-                case "2" :
-                    member = updatePassword(member);
-                    break;
-                case "3" :
-                    break;
-                case "4" :
-                    member = chargeBalance(member);
-                    break;
-                case "5" :
-                    break;
-                case "6" :
-                    logoutView(member);
-                    return;
-            }
-        }
-    }
-
-    public void adminView(Member member){
-        System.out.println("adminView");
-        System.out.println(member.getEmail());
     }
 
     public void registerMemberView(){
@@ -99,65 +70,11 @@ public class MenuView {
             return;
         }
         if(login.isAdmin()){
-            adminView(login);
+            adminView.run(login);
         }else {
-            memberView(login);
+            memberView.run(login);
         }
     }
-
-    public void logoutView(Member member){
-        memberController.logout(member);
-    }
-
-    /**
-     * 패스워드 업데이트. 먼저 입력한 패스워드가 현재 패스워드와 맞는지 검증
-     * 이후 변경할 패스워드를 입력받아 db에 update후 sessionSet에 있는 기존 session을 삭제, 새로 받은 객체를 추가
-     * 그리고 memberView의 파라미터 member객체를 업데이트.
-     * @param member
-     * @return
-     */
-    public Member updatePassword(Member member){
-        while(true){
-            System.out.println("현재 비밀번호를 입력");
-            System.out.println("0.뒤로가기");
-            System.out.print(">");
-            String currentPassword = sc.nextLine();
-            if(currentPassword.equals("0")){
-                return null;
-            }
-            if(memberController.passwordChk(member, currentPassword)){ //현재 패스워드가 맞는지 체크 후 맞으면 break
-                break;
-            }
-            System.out.println("비밀번호가 맞지 않음");
-        }
-        System.out.println("변경할 비밀번호를 입력");
-        System.out.println("0.뒤로가기");
-        System.out.print(">");
-        String password = passwordChk(); //비밀번호가 4자리 이상일때 password로 받아옴
-        Member updated = memberController.updatePassword(member, password);// 실제 패스워드 수정후 member객체 받아옴
-        return updated;
-    }
-    public Member chargeBalance(Member member){
-        System.out.println("충전할 금액을 입력하세요");
-        System.out.println(">");
-        long charge = 0;
-        while(true){
-            charge = Long.parseLong(sc.nextLine());
-            if(charge > 0){
-                break;
-            }
-            System.out.println("0이거나 음수임");
-        }
-        return updateBalance(member.getId(), member.getEmail(), charge);
-    }
-
-
-    private Member updateBalance(long id, String email, long charge){
-        Member member = new Member(id, email, null, null, charge, false);
-        return memberController.updateBalance(member);
-    }
-
-
 
     /**
      * email이 중복인지 혹은 형식에 맞는지 체크하는 메서드
