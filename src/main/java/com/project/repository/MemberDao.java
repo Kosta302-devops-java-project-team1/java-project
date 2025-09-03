@@ -1,6 +1,7 @@
 package main.java.com.project.repository;
 
 import main.java.com.project.dto.Member;
+import main.java.com.project.exception.InsufficientBalanceException;
 import main.java.com.project.exception.MemberNotFoundException;
 
 import java.sql.SQLException;
@@ -23,4 +24,6 @@ public interface MemberDao {
     Member login(Member member) throws SQLException;
 
     Member updatePassword(Member member, String password) throws MemberNotFoundException, SQLException;
+
+    Member updateBalance(Member member) throws SQLException, MemberNotFoundException, InsufficientBalanceException;
 }

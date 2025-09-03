@@ -53,7 +53,7 @@ public class MenuView {
                 case "3" :
                     break;
                 case "4" :
-
+                    member = chargeBalance(member);
                     break;
                 case "5" :
                     break;
@@ -137,15 +137,26 @@ public class MenuView {
         Member updated = memberController.updatePassword(member, password);// 실제 패스워드 수정후 member객체 받아옴
         return updated;
     }
-
-    public Member chargeBalance(long id){
+    public Member chargeBalance(Member member){
         System.out.println("충전할 금액을 입력하세요");
         System.out.println(">");
-        long charge = Long.parseLong(sc.nextLine());
-        Member member = new Member(id, null, null, null, charge, false);
-
-        return null;
+        long charge = 0;
+        while(true){
+            charge = Long.parseLong(sc.nextLine());
+            if(charge > 0){
+                break;
+            }
+            System.out.println("0이거나 음수임");
+        }
+        return updateBalance(member.getId(), member.getEmail(), charge);
     }
+
+
+    private Member updateBalance(long id, String email, long charge){
+        Member member = new Member(id, email, null, null, charge, false);
+        return memberController.updateBalance(member);
+    }
+
 
 
     /**

@@ -2,6 +2,7 @@ package main.java.com.project.service;
 
 import main.java.com.project.dto.Member;
 import main.java.com.project.exception.EmailDuplicateException;
+import main.java.com.project.exception.InsufficientBalanceException;
 import main.java.com.project.exception.MemberNotFoundException;
 import main.java.com.project.repository.MemberDao;
 import main.java.com.project.repository.MemberDaoImpl;
@@ -60,15 +61,20 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     public Member updatePassword(Member member, String password) throws SQLException, MemberNotFoundException {
-        Member updated = memberDao.updatePassword(member, password); //
+        return updateSession(member, memberDao.updatePassword(member, password));
+    }
+
+    @Override
+    public Member updateBalance(Member member) throws SQLException, InsufficientBalanceException, MemberNotFoundException {
+        return updateSession(member, memberDao.updateBalance(member));
+    }
+
+    private Member updateSession(Member member, Member updated){
         Session session = new Session(member.getEmail(), member);
         SessionSet sessionSet = SessionSet.getInstance();
         sessionSet.remove(session);
         session = new Session(updated.getEmail(), updated);
         sessionSet.add(session);
-        for(Session s : sessionSet.getSet()){
-            System.out.println(s.getSessionMember().getPassword());
-        }
         return updated;
     }
 }

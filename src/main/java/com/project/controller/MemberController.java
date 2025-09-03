@@ -2,6 +2,7 @@ package main.java.com.project.controller;
 
 import main.java.com.project.dto.Member;
 import main.java.com.project.exception.EmailDuplicateException;
+import main.java.com.project.exception.InsufficientBalanceException;
 import main.java.com.project.exception.MemberNotFoundException;
 import main.java.com.project.service.MemberService;
 import main.java.com.project.service.MemberServiceImpl;
@@ -65,6 +66,21 @@ public class MemberController {
             updated = memberService.updatePassword(member, password);
             SuccessView.printMessage("비밀번호 변경 성공");
         } catch (SQLException | MemberNotFoundException e) {
+            FailView.errorMessage(e.getMessage());
+        }
+        return updated;
+    }
+    public Member updateBalance(Member member){
+        Member updated = null;
+        try {
+            updated = memberService.updateBalance(member);
+            if(member.getBalance() < 0){
+                SuccessView.printMessage(member.getBalance() + " 결제 완료");
+            }else {
+                SuccessView.printMessage(member.getBalance() + " 충전 완료");
+            }
+
+        } catch (SQLException | InsufficientBalanceException | MemberNotFoundException e) {
             FailView.errorMessage(e.getMessage());
         }
         return updated;

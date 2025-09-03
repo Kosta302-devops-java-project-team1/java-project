@@ -2,6 +2,7 @@ package main.java.com.project.repository;
 
 import main.java.com.project.common.DBManager;
 import main.java.com.project.dto.Member;
+import main.java.com.project.exception.InsufficientBalanceException;
 import main.java.com.project.exception.MemberNotFoundException;
 
 import java.sql.Connection;
@@ -110,5 +111,66 @@ public class MemberDaoImpl implements MemberDao {
             DBManager.releaseConnection(con, ps);
         }
         return updated;
+    }
+
+    @Override
+    public Member updateBalance(Member member) throws SQLException, MemberNotFoundException, InsufficientBalanceException {
+        Connection con = null;
+        PreparedStatement ps = null;
+        Member updated = null;
+        String sql = "update members set balance = ? where member_id = ?";
+        try {
+            con = DBManager.getConnection();
+            con.setAutoCommit(false);
+            updated = findById(con, member.getId());
+            if(updated == null){
+                throw new MemberNotFoundException("id가 없음");
+            }
+            long updateCharge = updated.getBalance() + member.getBalance();
+            if(updateCharge < 0){
+                throw new InsufficientBalanceException("잔액이 부족합니다.");
+            }
+            ps = con.prepareStatement(sql);
+            ps.setLong(1, updateCharge);
+            ps.setLong(2, member.getId());
+            int result = ps.executeUpdate();
+            if(result == 0){
+                throw new SQLException("수정되지 않았습니다.");
+            }
+            updated = findById(con, updated.getId());
+            con.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException("db오류");
+        } finally {
+            DBManager.releaseConnection(con, ps);
+        }
+        return updated;
+    }
+
+    private Member findById(Connection con, long id) throws SQLException {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        Member member = null;
+        String sql = "select * from members where member_id = ?";
+        try {
+            ps = con.prepareStatement(sql);
+            ps.setLong(1, id);
+            rs = ps.executeQuery();
+            if(rs.next()){
+                member = new Member(rs.getLong("member_id"),
+                        rs.getString("email"),
+                        rs.getString("password"),
+                        rs.getString("created_at"),
+                        rs.getLong("balance"),
+                        (rs.getInt("is_admin") != 0));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException("db오류");
+        } finally {
+            DBManager.releaseConnection(null, ps, rs);
+        }
+        return member;
     }
 }
