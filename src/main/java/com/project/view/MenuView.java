@@ -10,16 +10,17 @@ public class MenuView {
     MemberController memberController = MemberController.getInstance();
     AdminView adminView = new AdminView();
     MemberView memberView = new MemberView();
+    CommonView commonView = new CommonView();
     Scanner sc = new Scanner(System.in);
     private static final String EMAIL_REGEX = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
     private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
     public void start(){
-        System.out.println("---------------------------------");
         guestView();
     }
 
     public void guestView(){
         while(true){
+            commonView.run();
             System.out.println("---------------------------------");
             System.out.println("1. 항공편검색\t2.로그인\t3.회원가입\t9.종료");
             System.out.println("---------------------------------");

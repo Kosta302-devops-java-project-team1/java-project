@@ -7,9 +7,11 @@ import java.util.Scanner;
 
 public class MemberView {
     MemberController memberController = MemberController.getInstance();
+    CommonView commonView = new CommonView();
     Scanner sc = new Scanner(System.in);
     public void run(Member member){
         while(true){
+            commonView.run();
             System.out.println("-----"+member.getEmail()+"-----");
             System.out.println("1.항공편 검색\t2.개인정보수정\t3.예매내역확인\t4.크레딧\t5.결제내역\t6.로그아웃");
             System.out.println("---------------------------------");
