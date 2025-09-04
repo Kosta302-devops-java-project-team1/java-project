@@ -16,4 +16,12 @@ public interface BoardService {
     List<Board> searchNotClosedBoard() throws SQLException;
 
     void writeBoard(Member member, Board board) throws SQLException, AccessDeniedException;
+
+    List<Board> searchAllBoard() throws SQLException;
+
+    Board searchOneBoard(long boardId) throws SQLException;
+
+    void deleteBoard(Member member, long boardId) throws SQLException, AccessDeniedException;
+
+    void updateBoard(Member member, Board board) throws SQLException, AccessDeniedException;
 }

@@ -28,4 +28,9 @@ public interface BoardDao {
      */
     List<Board> findAllBoard() throws SQLException;
 
+    Board findOneBoard(long boardId) throws SQLException;
+
+    void deleteBoard(long boardId) throws SQLException;
+
+    public void updateBoard(Board board) throws SQLException;
 }

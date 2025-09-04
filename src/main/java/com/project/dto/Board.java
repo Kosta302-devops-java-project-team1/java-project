@@ -1,5 +1,7 @@
 package main.java.com.project.dto;
 
+import main.java.com.project.session.SessionSet;
+
 public class Board {
     private long id; // 이벤트 글 번호
     private long memberId; // 이벤트 글 작성자번호
@@ -20,6 +22,12 @@ public class Board {
         this.updatedAt = updatedAt;
         this.eventEndAt = eventEndAt;
         this.isClose = isClose;
+    }
+
+    public Board(long memberId, String content, String eventEndAt) {
+        this.memberId = memberId;
+        this.content = content;
+        this.eventEndAt = eventEndAt;
     }
 
     public long getId() {
