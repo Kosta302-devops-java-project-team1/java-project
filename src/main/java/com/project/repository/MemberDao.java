@@ -21,9 +21,34 @@ public interface MemberDao {
      */
     Member findByEmail(String email) throws SQLException;
 
+    /**
+     * select * from members where email = ? and password = ?
+     * @param member
+     * @return
+     * @throws SQLException
+     */
     Member login(Member member) throws SQLException;
 
+    /**
+     * update members set password = ? where member_id = ?
+     * @param member
+     * @param password
+     * @return
+     * @throws MemberNotFoundException
+     * @throws SQLException
+     */
     Member updatePassword(Member member, String password) throws MemberNotFoundException, SQLException;
 
+    /**
+     * update members set balance = ? where member_id = ?
+     * 파라미터로 받은 member객체의 memberId로 DB에서 특정 member 정보를 select하고
+     * view에서 입력받은 충전금액(amount)를 더한 뒤 updqte실행.
+     * 이후 다시 db에서 정보를 조회해서 반환
+     * @param member
+     * @return
+     * @throws SQLException
+     * @throws MemberNotFoundException
+     * @throws InsufficientBalanceException
+     */
     Member updateBalance(Member member) throws SQLException, MemberNotFoundException, InsufficientBalanceException;
 }
