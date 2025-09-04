@@ -5,8 +5,6 @@ import main.java.com.project.dto.Member;
 import main.java.com.project.exception.AccessDeniedException;
 import main.java.com.project.repository.BoardDao;
 import main.java.com.project.repository.BoardDaoImpl;
-import main.java.com.project.repository.MemberDao;
-import main.java.com.project.repository.MemberDaoImpl;
 
 import java.sql.SQLException;
 import java.util.List;
