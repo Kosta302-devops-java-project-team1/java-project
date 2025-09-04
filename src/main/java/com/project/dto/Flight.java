@@ -18,19 +18,59 @@ public class Flight {
     private String last_update;
 
     @Override
-    public String toString() {  // todo 뷰에 맞게 바꾸기 / airport 한국어화하기 -> ICN ->서울(인천공항) / duration 시간화하기 HT2H30M -> 2시간30분
-        return "Flight{" +
-                "airline_name='" + airline_name + '\'' +
-                ", departure_airport='" + departure_airport + '\'' +
-                ", departure_terminal=" + departure_terminal +
-                ", departure_time='" + departure_time + '\'' +
-                ", arrival_airport='" + arrival_airport + '\'' +
-                ", arrival_terminal=" + arrival_terminal +
-                ", arrival_time='" + arrival_time + '\'' +
-                ", duration='" + duration + '\'' +
-                ", price=" + price +
-                ", remaining_seat=" + remaining_seat +
-                '}';
+    public String toString() {
+        String formattedPrice = String.format("%,.0f원", price);
+        String departureTime = this.departure_time.substring(11, 16);
+        String arrivalTime = this.arrival_time.substring(11, 16);
+        String durationString = formatDuration(duration); // 또는 duration 필드를 적절히 파싱
+
+        return String.format("%s항공 | %s[%s공항(%s터미널)] >>> %s[%s공항(%s터미널)] - 소요시간:[%s] | 최저가격: %s",
+                this.airline_name,
+                departureTime,
+                this.departure_airport,
+                this.departure_terminal,
+                arrivalTime,
+                this.arrival_airport,
+                this.arrival_terminal,
+                durationString,
+                formattedPrice);
+    }
+
+
+    private String formatDuration(String duration) {
+        // duration이 null이거나 비어있으면 빈 문자열 반환
+        if (duration == null || duration.isEmpty()) {
+            return "";
+        }
+
+        // 'P'와 'T'는 제거하고, 'H'와 'M'으로 분리
+        String parsed = duration.substring(2); // "PT" 제거
+
+        int hours = 0;
+        int minutes = 0;
+
+        // 'H'와 'M' 인덱스를 찾아 시간과 분을 추출
+        int hourIndex = parsed.indexOf('H');
+        int minuteIndex = parsed.indexOf('M');
+
+        if (hourIndex != -1) {
+            hours = Integer.parseInt(parsed.substring(0, hourIndex));
+        }
+
+        if (minuteIndex != -1) {
+            int startIndex = (hourIndex != -1) ? hourIndex + 1 : 0;
+            minutes = Integer.parseInt(parsed.substring(startIndex, minuteIndex));
+        }
+
+        StringBuilder sb = new StringBuilder();
+        if (hours > 0) {
+            sb.append(hours).append("시간 ");
+        }
+        if (minutes > 0) {
+            sb.append(minutes).append("분");
+        }
+
+        return sb.toString().trim();
     }
 
     public Flight(String airline_name, String departure_airport, int departure_terminal, String departure_time, String arrival_airport, int arrival_terminal, String arrival_time, String duration, double price, int remaining_seat) {
