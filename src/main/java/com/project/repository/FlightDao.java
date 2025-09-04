@@ -9,7 +9,12 @@ public interface FlightDao {
     /**
      * insert flights
      */
-    int save(Flight flight) throws SQLException;
+    int saveOrUpdatePrice(Flight flight) throws SQLException;
+
+    /**
+     * update flights seats count
+     */
+    int updateSeatCount(int flight_id) throws SQLException;
 
     /**
      * select flights

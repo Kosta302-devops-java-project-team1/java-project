@@ -18,57 +18,51 @@ public class FlightService {
     public List<Flight> findFlights(FlightDto flightDto) throws ResponseException, SQLException {
         List<Flight> flights = new ArrayList<>();
 
-        /**
-         * DB에 정보가 있는지 또는 오래되었는지 확인
-         * 10분보다 오래되었거나 없을시 null 반환
-         */
-        flights = findFlightsFromDB(flightDto);
+        // api retrieve
+        FlightOfferSearch[] offers =
+                AmadeusConnect.INSTANCE.flights(
+                        flightDto.getOrigin(),
+                        flightDto.getDestination(),
+                        flightDto.getDepartDate(),
+                        flightDto.getAdults()
+                );
 
-        if (flights.isEmpty()) {
-            // api retrieve
-            FlightOfferSearch[] offers =
-                    AmadeusConnect.INSTANCE.flights(
-                            flightDto.getOrigin(),
-                            flightDto.getDestination(),
-                            flightDto.getDepartDate(),
-                            flightDto.getAdults()
+        // flight 객체 저장
+        for (FlightOfferSearch offer : offers) {
+            double price = offer.getPrice().getTotal();
+            int remainingSeat = offer.getNumberOfBookableSeats();
+            for (FlightOfferSearch.Itinerary itinerary : offer.getItineraries()) {
+                for (FlightOfferSearch.SearchSegment segment : itinerary.getSegments()) {
+                    // flight entity
+                    String departure_airport = segment.getDeparture().getIataCode();
+                    int departure_terminal = Integer.parseInt(segment.getDeparture().getTerminal());
+                    String departure_time = segment.getDeparture().getAt();
+                    String arrival_airport = segment.getArrival().getIataCode();
+                    int arrival_terminal = Integer.parseInt(segment.getArrival().getTerminal());
+                    String arrival_time = segment.getArrival().getAt();
+                    String duration = segment.getDuration();
+                    String airline_name = segment.getCarrierCode();
+
+                    // flight 객체
+                    Flight flight = new Flight(
+                            airline_name,
+                            departure_airport,
+                            departure_terminal,
+                            departure_time,
+                            arrival_airport,
+                            arrival_terminal,
+                            arrival_time,
+                            duration,
+                            price,
+                            remainingSeat
                     );
 
-            // flight 객체 저장
-            for (FlightOfferSearch offer : offers) {
-                double price = offer.getPrice().getTotal();
-                int remainingSeat = offer.getNumberOfBookableSeats();
-                for (FlightOfferSearch.Itinerary itinerary : offer.getItineraries()) {
-                    for (FlightOfferSearch.SearchSegment segment : itinerary.getSegments()) {
-                        // flight entity
-                        String departure_airport = segment.getDeparture().getIataCode();
-                        int departure_terminal = Integer.parseInt(segment.getDeparture().getTerminal());
-                        String departure_time = segment.getDeparture().getAt();
-                        String arrival_airport = segment.getArrival().getIataCode();
-                        int arrival_terminal = Integer.parseInt(segment.getArrival().getTerminal());
-                        String arrival_time = segment.getArrival().getAt();
-                        String duration = segment.getDuration();
-                        String airline_name = segment.getCarrierCode();
+                    flights.add(flight);
+                    int result = flightDao.saveOrUpdatePrice(flight);
 
-                        // flight 객체
-                        Flight flight = new Flight(
-                                airline_name,
-                                departure_airport,
-                                departure_terminal,
-                                departure_time,
-                                arrival_airport,
-                                arrival_terminal,
-                                arrival_time,
-                                duration,
-                                price,
-                                remainingSeat
-                        );
 
-                        flights.add(flight);
-                        int result = flightDao.save(flight);
-                        // todo 에러 예외처리
-                        if (result == 0) throw new SQLException("저장 실패");
-                    }
+                    // todo 에러 예외처리
+                    if (result == 0) throw new SQLException("저장 실패");
                 }
             }
         }
@@ -79,4 +73,7 @@ public class FlightService {
         return flightDao.findByOriginAndDestinationAndDepartDateAndCheckTime(flightDto.getOrigin(), flightDto.getDestination(), flightDto.getDepartDate());
     }
 
+    public void updateSeatInfo(int flight_id) {
+
+    }
 }

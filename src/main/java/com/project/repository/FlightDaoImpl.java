@@ -12,16 +12,17 @@ import java.util.List;
 
 public class FlightDaoImpl implements FlightDao{
     @Override
-    public int save(Flight flight) throws SQLException {
+    public int saveOrUpdatePrice(Flight flight) throws SQLException {
         Connection con=null;
         PreparedStatement ps=null;
-        String sql="INSERT INTO flights(flights_id, airline_name, departure_airport, departure_terminal, departure_time, arrival_airport, arrival_terminal, arrival_time, duration, price, remaining_seat, last_update)" +
-                "  VALUES(0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, now())";
+        String sql="INSERT INTO flights(airline_name, departure_airport, departure_terminal, departure_time, arrival_airport, arrival_terminal, arrival_time, duration, price)" +
+                "  VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)" +
+                " ON DUPLICATE KEY UPDATE price = VALUES(price);";
         int result=0;
         try {
             con = DBManager.getConnection();
 
-            ps = con.prepareStatement(sql);//RETURN_GENERATED_KEYS 옵션을 사용하여 AUTO_INCREMENT 값을 가져온다
+            ps = con.prepareStatement(sql);
             ps.setString(1, flight.getAirline_name());
             ps.setString(2, flight.getDeparture_airport());
             ps.setInt(3, flight.getDeparture_terminal());
@@ -31,10 +32,32 @@ public class FlightDaoImpl implements FlightDao{
             ps.setString(7, flight.getArrival_time());
             ps.setString(8, flight.getDuration());
             ps.setDouble(9, flight.getPrice());
-            ps.setInt(10, flight.getRemaining_seat());
 
             result = ps.executeUpdate();
             //todo batch로 여러정보저장
+
+        }finally {
+            DBManager.releaseConnection(con, ps);
+        }
+
+        return result;
+    }
+
+    @Override
+    public int updateSeatCount(int flight_id) throws SQLException {
+        Connection con = null;
+        PreparedStatement ps = null;
+        String sql = "update flights set remaining_seat = (select count(*) from seats where flight_id = ? and is_available = 1) where flights_id = ?;";
+        int result=0;
+
+        try {
+            con = DBManager.getConnection();
+
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, flight_id);
+            ps.setInt(2, flight_id);
+
+            result = ps.executeUpdate();
 
         }finally {
             DBManager.releaseConnection(con, ps);
