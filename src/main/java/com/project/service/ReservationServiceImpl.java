@@ -65,7 +65,7 @@ public class ReservationServiceImpl implements ReservationService{
     public boolean cancleReservation(Member member, Reservation reservation) throws SQLException, InsufficientBalanceException, MemberNotFoundException {
         Connection con = DBManager.getConnection();
         List<Ticket> ticketList = ticketDao.selectByReservationId(con, reservation.getReservationId());
-        Ticket ticket = ticketList.getFirst();
+        Ticket ticket = ticketList.get(0);
         member.setBalance(reservation.getTotal_amount());
         long flightId = ticket.getFlightId();
         ticketDao.deleteTicket(con, reservation.getReservationId());
