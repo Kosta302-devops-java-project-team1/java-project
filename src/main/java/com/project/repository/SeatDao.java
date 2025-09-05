@@ -13,7 +13,7 @@ public interface SeatDao {
     int save(long flight_id) throws SQLException;
 
     /**
-     * 선택가능한 좌석을 반환한다.
+     * 선택한 비행기의 좌석을 반환한다.
      */
     List<Seat> findByFlightId(long flight_id) throws SQLException;
 

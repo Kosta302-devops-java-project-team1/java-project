@@ -19,7 +19,7 @@ public class SeatDaoImpl implements SeatDao{
         String sql = "insert into seats(flight_id, seat_num) values (?, ?);";
         int result=0;
 
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 42; i++) {
             try {
                 con = DBManager.getConnection();
 
@@ -41,7 +41,7 @@ public class SeatDaoImpl implements SeatDao{
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String sql="select * FROM seats where flight_id = ? and is_available = ?;";
+        String sql="select * FROM seats where flight_id = ?;";
 
         List<Seat> seats = new ArrayList<>();
 
@@ -50,7 +50,6 @@ public class SeatDaoImpl implements SeatDao{
 
             ps = con.prepareStatement(sql);
             ps.setLong(1, flight_id);
-            ps.setInt(2, 1);
 
             rs = ps.executeQuery();
             while (rs.next()) {
