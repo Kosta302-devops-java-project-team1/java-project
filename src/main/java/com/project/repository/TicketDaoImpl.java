@@ -88,8 +88,37 @@ public class TicketDaoImpl implements TicketDao{
         } finally {
             DBManager.releaseConnection(null, ps, rs);
         }
+        return ticketList;
+    }
 
+    @Override
+    public List<Ticket> selectByReservationId(long reservationId) throws SQLException {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        List<Ticket> ticketList = new ArrayList<>();
+        String sql = "select * from tickets where reservation_id = ?";
 
+        try {
+            con = DBManager.getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setLong(1, reservationId);
+            rs = ps.executeQuery();
+            while(rs.next()){
+                Ticket ticket = new Ticket(rs.getLong("ticket_id"),
+                        rs.getLong("flight_id"),
+                        rs.getLong("reservation_id"),
+                        rs.getString("seat_num"),
+                        rs.getString("passenger"),
+                        rs.getString("phone_number"),
+                        rs.getString("passport_number"));
+                ticketList.add(ticket);
+            }
+        } catch (SQLException e) {
+            throw new SQLException("좌석정보 가져오지 못함");
+        } finally {
+            DBManager.releaseConnection(con, ps, rs);
+        }
         return ticketList;
     }
 }

@@ -5,6 +5,7 @@ import main.java.com.project.dto.Flight;
 import main.java.com.project.dto.Member;
 import main.java.com.project.dto.Reservation;
 import main.java.com.project.dto.Ticket;
+import main.java.com.project.exception.AccessDeniedException;
 import main.java.com.project.exception.InsufficientBalanceException;
 import main.java.com.project.exception.MemberNotFoundException;
 import main.java.com.project.repository.*;
@@ -46,7 +47,6 @@ public class ReservationServiceImpl implements ReservationService{
             seatDao.update(con, t.getFlightId(), t.getSeats(), 0);
         }
         flightDao.updateSeatCount(con, flight.getFlight_id());
-
         Member updated = memberDao.updateBalance(con, member);
         if(updated != null){
             Session session = new Session(member.getEmail(), member);
@@ -54,6 +54,7 @@ public class ReservationServiceImpl implements ReservationService{
             ss.remove(session);
             session = new Session(updated.getEmail(), updated);
             ss.add(session);
+            member.setBalance(updated.getBalance());
         }
         con.commit();
         DBManager.releaseConnection(con, null);
@@ -73,7 +74,48 @@ public class ReservationServiceImpl implements ReservationService{
             seatDao.update(con, flightId, t.getSeats(), 1);
         }
         flightDao.updateSeatCount(con, flightId);
-        memberDao.updateBalance(con, member);
+        Member updated = memberDao.updateBalance(con, member);
+        if(updated != null){
+            Session session = new Session(member.getEmail(), member);
+            SessionSet ss = SessionSet.getInstance();
+            ss.remove(session);
+            session = new Session(updated.getEmail(), updated);
+            ss.add(session);
+            member.setBalance(updated.getBalance());
+        }
         return true;
+    }
+
+    @Override
+    public List<Reservation> selectAllReservation(Member member) throws SQLException, AccessDeniedException {
+        if(!member.isAdmin()){
+            throw new AccessDeniedException("관리자가 아닙니다.");
+        }
+        return reservationDao.selectAll();
+    }
+
+    @Override
+    public List<Reservation> selectMemberReservation(long memberId) throws SQLException {
+        return reservationDao.selectAllByMemberId(memberId);
+    }
+
+    @Override
+    public Reservation selectOneReservation(long reservationId) throws SQLException {
+        return reservationDao.selectOneByReservationId(reservationId);
+    }
+
+    @Override
+    public List<Ticket> selectAllTicket(Member member) throws SQLException, AccessDeniedException {
+        return List.of();
+    }
+
+    @Override
+    public List<Ticket> selectMemberTicket(long reservationId) throws SQLException {
+        return ticketDao.selectByReservationId(reservationId);
+    }
+
+    @Override
+    public Ticket selectAllMemberTicket(long memberId) throws SQLException {
+        return null;
     }
 }

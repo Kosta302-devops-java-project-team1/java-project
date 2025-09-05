@@ -10,4 +10,5 @@ public interface TicketDao {
     void insertTicket(Connection con, List<Ticket> list) throws SQLException;
     void deleteTicket(Connection con, long reservationId) throws SQLException;
     List<Ticket> selectByReservationId(Connection con, long reservationId) throws SQLException;
+    List<Ticket> selectByReservationId(long reservationId) throws SQLException;
 }

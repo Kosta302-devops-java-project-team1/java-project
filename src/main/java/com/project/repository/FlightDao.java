@@ -32,4 +32,6 @@ public interface FlightDao {
      * @return flight_id
      */
     public long findLastInsertId() throws SQLException;
+
+    Flight findByFlightId(long flightId) throws SQLException;
 }

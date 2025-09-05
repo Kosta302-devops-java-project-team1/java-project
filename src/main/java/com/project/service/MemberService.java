@@ -1,11 +1,13 @@
 package main.java.com.project.service;
 
+import main.java.com.project.dto.CreditHistory;
 import main.java.com.project.dto.Member;
 import main.java.com.project.exception.EmailDuplicateException;
 import main.java.com.project.exception.InsufficientBalanceException;
 import main.java.com.project.exception.MemberNotFoundException;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public interface MemberService {
     void registerMember(Member member) throws SQLException, EmailDuplicateException;
@@ -43,4 +45,6 @@ public interface MemberService {
     Member updatePassword(Member member, String password) throws SQLException, MemberNotFoundException;
 
     Member updateBalance(Member member) throws SQLException, InsufficientBalanceException, MemberNotFoundException;
+
+    List<CreditHistory> viewAllMemberChargeDetail(long memberId) throws SQLException;
 }

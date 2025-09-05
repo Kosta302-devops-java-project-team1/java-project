@@ -1,24 +1,30 @@
 package main.java.com.project.service;
 
+import main.java.com.project.dto.CreditHistory;
 import main.java.com.project.dto.Member;
 import main.java.com.project.exception.EmailDuplicateException;
 import main.java.com.project.exception.InsufficientBalanceException;
 import main.java.com.project.exception.MemberNotFoundException;
+import main.java.com.project.repository.ChargeDetailDao;
+import main.java.com.project.repository.ChargeDetailDaoImpl;
 import main.java.com.project.repository.MemberDao;
 import main.java.com.project.repository.MemberDaoImpl;
 import main.java.com.project.session.Session;
 import main.java.com.project.session.SessionSet;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class MemberServiceImpl implements MemberService{
     private static final MemberServiceImpl instance = new MemberServiceImpl();
-    private final MemberDao memberDao = new MemberDaoImpl();
     private MemberServiceImpl() {
     }
     public static MemberService getInstance(){
         return instance;
     }
+    private final MemberDao memberDao = new MemberDaoImpl();
+    private final ChargeDetailDao chargeDetailDao = new ChargeDetailDaoImpl();
+
 
     @Override
     public void registerMember(Member member) throws SQLException, EmailDuplicateException {
@@ -76,5 +82,11 @@ public class MemberServiceImpl implements MemberService{
         session = new Session(updated.getEmail(), updated);
         sessionSet.add(session);
         return updated;
+    }
+
+    @Override
+    public List<CreditHistory> viewAllMemberChargeDetail(long memberId) throws SQLException {
+        List<CreditHistory> list = chargeDetailDao.selectByMemberId(memberId);
+        return list;
     }
 }
