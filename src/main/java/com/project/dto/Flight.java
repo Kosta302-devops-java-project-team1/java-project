@@ -4,7 +4,7 @@ package main.java.com.project.dto;
  * Flight entity
  */
 public class Flight {
-    private int flight_id;
+    private long flight_id;
     private String airline_name;
     private String departure_airport;
     private int departure_terminal;
@@ -73,7 +73,7 @@ public class Flight {
         return sb.toString().trim();
     }
 
-    public Flight(String airline_name, String departure_airport, int departure_terminal, String departure_time, String arrival_airport, int arrival_terminal, String arrival_time, String duration, double price, int remaining_seat) {
+    public Flight(String airline_name, String departure_airport, int departure_terminal, String departure_time, String arrival_airport, int arrival_terminal, String arrival_time, String duration, double price) {
         this.airline_name = airline_name;
         this.departure_airport = departure_airport;
         this.departure_terminal = departure_terminal;
@@ -83,11 +83,10 @@ public class Flight {
         this.arrival_time = arrival_time;
         this.duration = duration;
         this.price = price;
-        this.remaining_seat = remaining_seat;
     }
 
     // @AllArgsCons
-    public Flight(int flight_id, String airline_name, String departure_airport, int departure_terminal, String departure_time, String arrival_airport, int arrival_terminal, String arrival_time, String duration, double price, int remaining_seat, String last_update) {
+    public Flight(long flight_id, String airline_name, String departure_airport, int departure_terminal, String departure_time, String arrival_airport, int arrival_terminal, String arrival_time, String duration, double price, int remaining_seat, String last_update) {
         this.flight_id = flight_id;
         this.airline_name = airline_name;
         this.departure_airport = departure_airport;
@@ -102,7 +101,7 @@ public class Flight {
         this.last_update = last_update;
     }
 
-    public int getFlight_id() {
+    public long getFlight_id() {
         return flight_id;
     }
 

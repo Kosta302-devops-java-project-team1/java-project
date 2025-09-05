@@ -14,6 +14,7 @@ import java.util.List;
 
 public class FlightService {
     private static final FlightDao flightDao = new FlightDaoImpl();
+    private static final SeatService seatService = new SeatServiceImpl();
 
     public List<Flight> findFlights(FlightDto flightDto) throws ResponseException, SQLException {
         List<Flight> flights = new ArrayList<>();
@@ -30,7 +31,6 @@ public class FlightService {
         // flight 객체 저장
         for (FlightOfferSearch offer : offers) {
             double price = offer.getPrice().getTotal();
-            int remainingSeat = offer.getNumberOfBookableSeats();
             for (FlightOfferSearch.Itinerary itinerary : offer.getItineraries()) {
                 for (FlightOfferSearch.SearchSegment segment : itinerary.getSegments()) {
                     // flight entity
@@ -53,16 +53,16 @@ public class FlightService {
                             arrival_terminal,
                             arrival_time,
                             duration,
-                            price,
-                            remainingSeat
+                            price
                     );
 
                     flights.add(flight);
-                    int result = flightDao.saveOrUpdatePrice(flight);
-
-
+                    long flight_id = flightDao.saveOrUpdatePrice(flight);
                     // todo 에러 예외처리
-                    if (result == 0) throw new SQLException("저장 실패");
+                    if (flight_id == 0) throw new SQLException("저장 실패");
+
+                    seatService.initSeats(flight_id); // 항공 생성후 좌석 생성
+
                 }
             }
         }
@@ -73,7 +73,4 @@ public class FlightService {
         return flightDao.findByOriginAndDestinationAndDepartDateAndCheckTime(flightDto.getOrigin(), flightDto.getDestination(), flightDto.getDepartDate());
     }
 
-    public void updateSeatInfo(int flight_id) {
-
-    }
 }

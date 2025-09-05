@@ -9,7 +9,7 @@ public interface FlightDao {
     /**
      * insert flights
      */
-    int saveOrUpdatePrice(Flight flight) throws SQLException;
+    long saveOrUpdatePrice(Flight flight) throws SQLException;
 
     /**
      * update flights seats count
@@ -24,4 +24,10 @@ public interface FlightDao {
      * @return
      */
     List<Flight> findByOriginAndDestinationAndDepartDateAndCheckTime(String origin, String destination, String departDate) throws SQLException;
+
+    /**
+     *  방금 추가된 flight_id를 가져오는 쿼리
+     * @return flight_id
+     */
+    public long findLastInsertId() throws SQLException;
 }
