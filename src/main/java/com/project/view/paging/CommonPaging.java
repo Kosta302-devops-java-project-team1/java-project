@@ -1,6 +1,7 @@
 package main.java.com.project.view.paging;
 
 import main.java.com.project.dto.Board;
+import main.java.com.project.dto.CreditHistory;
 import main.java.com.project.dto.Reservation;
 
 import java.util.List;
@@ -31,6 +32,12 @@ public class CommonPaging {
                     System.out.println(number+". 예매번호 : "+reservation.getReservationId()+" | 예매시간 : "+
                             reservation.getCreatedAt());
                     number++;
+                }
+                break;
+            case "chargeDetail" :
+                for (int i = start; i < end; i++){
+                    CreditHistory creditHistory = (CreditHistory) list.get(i);
+                    System.out.println("충전금액 : " + creditHistory.getAmount() + " | 충전시간 : " + creditHistory.getCreatedAt());
                 }
                 break;
         }

@@ -1,5 +1,6 @@
 package main.java.com.project.controller;
 
+import main.java.com.project.dto.CreditHistory;
 import main.java.com.project.dto.Member;
 import main.java.com.project.exception.EmailDuplicateException;
 import main.java.com.project.exception.InsufficientBalanceException;
@@ -10,6 +11,7 @@ import main.java.com.project.view.FailView;
 import main.java.com.project.view.SuccessView;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class MemberController {
     private static final MemberController instance = new MemberController();
@@ -85,5 +87,17 @@ public class MemberController {
         }
         return updated;
     }
+
+    public List<CreditHistory> viewAllMemberChargeDetail(long memberId){
+        List<CreditHistory> list = null;
+        try {
+            list = memberService.viewAllMemberChargeDetail(memberId);
+        } catch (SQLException e) {
+            FailView.errorMessage(e.getMessage());
+        }
+        return list;
+    }
+
+
 
 }

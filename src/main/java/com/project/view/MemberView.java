@@ -4,6 +4,8 @@ import main.java.com.project.controller.FlightController;
 import main.java.com.project.controller.MemberController;
 import main.java.com.project.controller.ReservationController;
 import main.java.com.project.dto.*;
+import main.java.com.project.session.Session;
+import main.java.com.project.session.SessionSet;
 import main.java.com.project.view.paging.CommonPaging;
 
 import java.util.ArrayList;
@@ -78,7 +80,8 @@ public class MemberView {
             if(menu.equals("1")){
                 return chargeBalance(member);
             } else if (menu.equals("2")) {
-                return null;
+                chargeDetailView(member);
+                return member;
             } else if (menu.equals("9")) {
                 return member;
             } else {
@@ -101,8 +104,35 @@ public class MemberView {
         return updateBalance(member.getId(), member.getEmail(), charge);
     }
 
-    public void chargeDetailView(){
-
+    public void chargeDetailView(Member member){
+        List<CreditHistory> creditHistories = memberController.viewAllMemberChargeDetail(member.getId());
+        int currentPage = 0;
+        int lastPage = (creditHistories.size() / PAGESIZE);
+        while(true){
+            CommonPaging.paging(PAGESIZE, currentPage, creditHistories, "chargeDetail");
+            System.out.println("\n메뉴: [0] 이전페이지 [6] 다음페이지 [9] 이전메뉴");
+            String menu = sc.nextLine();
+            switch (menu) {
+                case "6":
+                    if (currentPage < lastPage) {
+                        currentPage++;
+                    } else {
+                        System.out.println("마지막페이지 입니다.");
+                    }
+                    break;
+                case "0":
+                    if (currentPage > 0) {
+                        currentPage--;
+                    } else {
+                        System.out.println("첫페이지입니다.");
+                    }
+                    break;
+                case "9":
+                    return;
+                default:
+                    System.out.println("다시 입력해주세요.");
+            }
+        }
     }
 
     public void viewAllMyReservation(Member member){
@@ -134,7 +164,7 @@ public class MemberView {
                 case "1": case "2": case "3": case "4": case "5":
                     number = (currentPage * PAGESIZE) + (Integer.parseInt(menu) - 1);
                     if (number < reservationList.size()) {
-                        reservationDetailView(member, reservationList.get(number));
+                        reservationList = reservationDetailView(member, reservationList.get(number), reservationList);
                     } else {
                         System.out.println("다시 입력해주세요.");
                     }
@@ -145,7 +175,7 @@ public class MemberView {
         }
     }
 
-    public void reservationDetailView(Member member, Reservation reservation){
+    public List<Reservation> reservationDetailView(Member member, Reservation reservation, List<Reservation> list){
         List<Ticket> tickets = reservationController.viewMemberTicket(reservation.getReservationId());
         Ticket ticket = tickets.getFirst();
         Flight flight = FlightController.searchOneFlight(ticket.getFlightId());
@@ -161,18 +191,20 @@ public class MemberView {
         }
         System.out.println("결제가격 : " + reservation.getTotal_amount());
         System.out.println("-------------------------------------");
-        System.out.println("[0] 뒤로가기 [1] 예약취소");
-        String menu = sc.nextLine();
-        switch (menu) {
-            case "0" :
-                return;
-            case "1" :
-                reservationController.deleteReservation(member, reservation);
-                return;
-            default :
-                System.out.println("다시 입력해주세요.");
+        while(true){
+            System.out.println("[0] 뒤로가기 [1] 예약취소");
+            String menu = sc.nextLine();
+            switch (menu) {
+                case "0" :
+                    return list;
+                case "1" :
+                    reservationController.deleteReservation(member, reservation);
+                    list = reservationController.viewAllMemberReservation(member);
+                    return list;
+                default :
+                    System.out.println("다시 입력해주세요.");
+            }
         }
-
     }
 
     private Member updateBalance(long id, String email, long charge){
@@ -207,7 +239,6 @@ public class MemberView {
         }
         reservationController.makeReservation(member, flight, list);
     }
-
     public void testCancle(Member member){
         Reservation reservation = new Reservation();
         reservation.setReservationId(8);
