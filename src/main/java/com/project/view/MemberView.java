@@ -74,7 +74,7 @@ public class MemberView {
     public Member checkBalance(Member member){
         System.out.println("현재 크레딧");
         System.out.println(">" + member.getBalance());
-        System.out.println("[1] 충전 [2] 충전내역확인 [3] 뒤로가기");
+        System.out.println("[1] 충전 [2] 충전내역확인 [9] 뒤로가기");
         while(true){
             String menu = sc.nextLine();
             if(menu.equals("1")){

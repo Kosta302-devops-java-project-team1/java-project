@@ -47,7 +47,6 @@ public class ReservationServiceImpl implements ReservationService{
             seatDao.update(con, t.getFlightId(), t.getSeats(), 0);
         }
         flightDao.updateSeatCount(con, flight.getFlight_id());
-
         Member updated = memberDao.updateBalance(con, member);
         if(updated != null){
             Session session = new Session(member.getEmail(), member);
@@ -55,6 +54,7 @@ public class ReservationServiceImpl implements ReservationService{
             ss.remove(session);
             session = new Session(updated.getEmail(), updated);
             ss.add(session);
+            member.setBalance(updated.getBalance());
         }
         con.commit();
         DBManager.releaseConnection(con, null);
@@ -74,7 +74,15 @@ public class ReservationServiceImpl implements ReservationService{
             seatDao.update(con, flightId, t.getSeats(), 1);
         }
         flightDao.updateSeatCount(con, flightId);
-        memberDao.updateBalance(con, member);
+        Member updated = memberDao.updateBalance(con, member);
+        if(updated != null){
+            Session session = new Session(member.getEmail(), member);
+            SessionSet ss = SessionSet.getInstance();
+            ss.remove(session);
+            session = new Session(updated.getEmail(), updated);
+            ss.add(session);
+            member.setBalance(updated.getBalance());
+        }
         return true;
     }
 
