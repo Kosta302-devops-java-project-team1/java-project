@@ -4,6 +4,7 @@ import main.java.com.project.dto.Member;
 import main.java.com.project.exception.InsufficientBalanceException;
 import main.java.com.project.exception.MemberNotFoundException;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 
 public interface MemberDao {
@@ -51,4 +52,15 @@ public interface MemberDao {
      * @throws InsufficientBalanceException
      */
     Member updateBalance(Member member) throws SQLException, MemberNotFoundException, InsufficientBalanceException;
+
+    /**
+     * 트랜잭션을 위해 Connection을 파라미터로 받은 같은 메서드...
+     * @param con
+     * @param member
+     * @return
+     * @throws SQLException
+     * @throws MemberNotFoundException
+     * @throws InsufficientBalanceException
+     */
+    Member updateBalance(Connection con, Member member) throws SQLException, MemberNotFoundException, InsufficientBalanceException;
 }

@@ -3,6 +3,7 @@ package main.java.com.project.repository;
 import main.java.com.project.common.DBManager;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
@@ -11,17 +12,26 @@ import java.sql.SQLException;
 public class ReservationDaoImpl implements ReservationDao{
 
     @Override
-    public void reservation() {
-        Connection con = null;
-
+    public int insertReservation(Connection con, long memberId, int count, int totalAmount) throws SQLException {
+        PreparedStatement ps = null;
+        String sql = "insert into reservations(member_id, count, total_amount) values(?, ?, ?)";
+        int result = 0;
         try {
-            con = DBManager.getConnection();
-            con.setAutoCommit(false);
-            con.commit();
+            ps = con.prepareStatement(sql);
+            ps.setLong(1, memberId);
+            ps.setInt(2, count);
+            ps.setInt(3, totalAmount);
+            result = ps.executeUpdate();
+            if(result == 0){
+                con.rollback();
+                throw new SQLException("예약테이블 레코드생성 실패");
+            }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            con.rollback();
+            throw new SQLException("예약테이블 레코드생성 실패");
         } finally {
-            DBManager.releaseConnection(con, null);
+            DBManager.releaseConnection(null, ps);
         }
+        return result;
     }
 }

@@ -158,6 +158,48 @@ public class MemberDaoImpl implements MemberDao {
         return updated;
     }
 
+    @Override
+    public Member updateBalance(Connection con, Member member) throws SQLException, MemberNotFoundException, InsufficientBalanceException {
+        PreparedStatement ps = null;
+        Member updated = null;
+        String sql = "update members set balance = ? where member_id = ?";
+        try {
+            updated = findById(con, member.getId());
+            if(updated == null){
+                throw new MemberNotFoundException("id가 없음");
+            }
+            long updateCharge = updated.getBalance() + member.getBalance();
+            if(updateCharge < 0){
+                con.rollback();
+                throw new InsufficientBalanceException("잔액이 부족합니다.");
+            }
+            ps = con.prepareStatement(sql);
+            ps.setLong(1, updateCharge);
+            ps.setLong(2, member.getId());
+            int result = ps.executeUpdate();
+            if(result == 0){
+                con.rollback();
+                throw new SQLException("수정되지 않았습니다.");
+            }
+            if(member.getBalance() > 0){
+                result = insertChargeDetail(con, member.getId(), member.getBalance());
+                if(result == 0){
+                    con.rollback();
+                    throw new SQLException("충전내역에 insert되지 못함");
+                }
+            }
+
+            updated = findById(con, updated.getId());
+            con.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException("db오류");
+        } finally {
+            DBManager.releaseConnection(con, ps);
+        }
+        return updated;
+    }
+
     private int insertChargeDetail(Connection con, long memberId, long charge) throws SQLException{
         PreparedStatement ps = null;
         String sql = "insert into charge_detail(member_id, amount) values (?,?)";
