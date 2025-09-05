@@ -177,7 +177,7 @@ public class MemberView {
 
     public List<Reservation> reservationDetailView(Member member, Reservation reservation, List<Reservation> list){
         List<Ticket> tickets = reservationController.viewMemberTicket(reservation.getReservationId());
-        Ticket ticket = tickets.getFirst();
+        Ticket ticket = tickets.get(0);
         Flight flight = FlightController.searchOneFlight(ticket.getFlightId());
         System.out.println("예매번호 : " + reservation.getReservationId());
         System.out.println("예매시간 : " + reservation.getCreatedAt());
