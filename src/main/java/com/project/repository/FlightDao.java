@@ -2,6 +2,7 @@ package main.java.com.project.repository;
 
 import main.java.com.project.dto.Flight;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -14,8 +15,9 @@ public interface FlightDao {
     /**
      * update flights seats count
      */
-    int updateSeatCount(int flight_id) throws SQLException;
+    int updateSeatCount(long flight_id) throws SQLException;
 
+    int updateSeatCount(Connection con, long flight_id) throws SQLException;
     /**
      * select flights
      * @param origin

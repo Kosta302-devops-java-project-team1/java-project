@@ -92,6 +92,29 @@ public class SeatDaoImpl implements SeatDao{
     }
 
     @Override
+    public int update(Connection con, long flightId, String seat, int i) throws SQLException {
+        PreparedStatement ps = null;
+        String sql = "update seats set is_available = ? where flight_id = ? and seat_num = ?";
+        int result = 0;
+
+        try {
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, i);
+            ps.setLong(2, flightId);
+            ps.setString(3, seat);
+            result = ps.executeUpdate();
+            if (result == 0){
+                con.rollback();
+                throw new SQLException("seat 업데이트 하지 못함");
+            }
+        } finally {
+            DBManager.releaseConnection(null, ps);
+        }
+
+        return result;
+    }
+
+    @Override
     public int findBySeatId(long seatId) throws SQLException {
         Connection con = null;
         PreparedStatement ps = null;

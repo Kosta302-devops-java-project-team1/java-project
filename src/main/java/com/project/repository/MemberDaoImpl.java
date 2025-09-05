@@ -190,12 +190,12 @@ public class MemberDaoImpl implements MemberDao {
             }
 
             updated = findById(con, updated.getId());
-            con.commit();
         } catch (SQLException e) {
             e.printStackTrace();
+            con.rollback();
             throw new SQLException("db오류");
         } finally {
-            DBManager.releaseConnection(con, ps);
+            DBManager.releaseConnection(null, ps);
         }
         return updated;
     }

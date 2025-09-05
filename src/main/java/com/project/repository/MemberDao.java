@@ -52,7 +52,6 @@ public interface MemberDao {
      * @throws InsufficientBalanceException
      */
     Member updateBalance(Member member) throws SQLException, MemberNotFoundException, InsufficientBalanceException;
-
     /**
      * 트랜잭션을 위해 Connection을 파라미터로 받은 같은 메서드...
      * @param con

@@ -4,8 +4,12 @@ import main.java.com.project.dto.Flight;
 import main.java.com.project.dto.Member;
 import main.java.com.project.dto.Reservation;
 import main.java.com.project.dto.Ticket;
+import main.java.com.project.exception.InsufficientBalanceException;
+import main.java.com.project.exception.MemberNotFoundException;
 import main.java.com.project.service.ReservationService;
 import main.java.com.project.service.ReservationServiceImpl;
+import main.java.com.project.view.FailView;
+import main.java.com.project.view.SuccessView;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -20,10 +24,22 @@ public class ReservationController {
     private final ReservationService reservationService = ReservationServiceImpl.getInstance();
 
 
-    public void makeReservation(Member member, Flight flight, Reservation reservation, List<Ticket> tickets){
+    public void makeReservation(Member member, Flight flight, List<Ticket> tickets)  {
         try {
-            reservationService.makeReservation(member, flight, reservation, tickets);
-        } catch (SQLException e) {
+            reservationService.makeReservation(member, flight, tickets);
+            SuccessView.printMessage(member.getEmail()+"님 "+flight.getFlight_id()+"편 "+tickets.size()+"장 예매완료");
+        } catch (SQLException | InsufficientBalanceException | MemberNotFoundException e) {
+            e.printStackTrace();
+            FailView.errorMessage(e.getMessage());
+        }
+    }
+
+    public void deleteReservation(Member member, Reservation reservation){
+        try {
+            reservationService.cancleReservation(member, reservation);
+            SuccessView.printMessage("예약 취소 성공");
+        } catch (SQLException | InsufficientBalanceException | MemberNotFoundException e) {
+            FailView.errorMessage(e.getMessage());
             throw new RuntimeException(e);
         }
     }

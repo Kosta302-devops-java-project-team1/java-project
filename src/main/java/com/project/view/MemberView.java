@@ -1,14 +1,22 @@
 package main.java.com.project.view;
 
 import main.java.com.project.controller.MemberController;
+import main.java.com.project.controller.ReservationController;
+import main.java.com.project.dto.Flight;
 import main.java.com.project.dto.Member;
+import main.java.com.project.dto.Reservation;
+import main.java.com.project.dto.Ticket;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class MemberView {
     MemberController memberController = MemberController.getInstance();
+    ReservationController reservationController = ReservationController.getInstance();
     CommonView commonView = new CommonView();
     Scanner sc = new Scanner(System.in);
+
     public void run(Member member){
         while(true){
             commonView.run();
@@ -18,11 +26,13 @@ public class MemberView {
             String menu = sc.nextLine();
             switch (menu){
                 case "1" :
+                    test(member);
                     break;
                 case "2" :
                     member = updatePassword(member);
                     break;
                 case "3" :
+                    testCancle(member);
                     break;
                 case "4" :
                     member = checkBalance(member);
@@ -113,5 +123,25 @@ public class MemberView {
             System.out.println("비밀번호는 4자리 이상");
         }
         return password;
+    }
+
+    public void test(Member member){
+        Flight flight = new Flight();
+        flight.setFlight_id(1);
+        flight.setPrice(90600);
+        List<Ticket> list = new ArrayList<>();
+        for(int i=1; i<=2; i++){
+            list.add(new Ticket(i+"", "test"+i, "123-1234-1234", "125873"));
+        }
+        reservationController.makeReservation(member, flight, list);
+    }
+
+    public void testCancle(Member member){
+        Reservation reservation = new Reservation();
+        reservation.setReservationId(8);
+        reservation.setMemberId(6);
+        reservation.setCount(2);
+        reservation.setTotal_amount(181200);
+        reservationController.deleteReservation(member, reservation);
     }
 }
