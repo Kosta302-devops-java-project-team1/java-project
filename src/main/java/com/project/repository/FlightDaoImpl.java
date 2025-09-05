@@ -48,23 +48,43 @@ public class FlightDaoImpl implements FlightDao{
     }
 
     @Override
-    public int updateSeatCount(int flight_id) throws SQLException {
+    public int updateSeatCount(long flight_id) throws SQLException {
         Connection con = null;
         PreparedStatement ps = null;
-        String sql = "update flights set remaining_seat = (select count(*) from seats where flight_id = ? and is_available = 1) where flights_id = ?;";
+        String sql = "update flights set remaining_seat = (select count(*) from seats where flight_id = ? and is_available = 1) where flight_id = ?;";
         int result=0;
 
         try {
             con = DBManager.getConnection();
 
             ps = con.prepareStatement(sql);
-            ps.setInt(1, flight_id);
-            ps.setInt(2, flight_id);
+            ps.setLong(1, flight_id);
+            ps.setLong(2, flight_id);
 
             result = ps.executeUpdate();
 
         }finally {
             DBManager.releaseConnection(con, ps);
+        }
+
+        return result;
+    }
+
+    @Override
+    public int updateSeatCount(Connection con, long flight_id) throws SQLException {
+        PreparedStatement ps = null;
+        String sql = "update flights set remaining_seat = (select count(*) from seats where flight_id = ? and is_available = 1) where flight_id = ?;";
+        int result=0;
+
+        try {
+            ps = con.prepareStatement(sql);
+            ps.setLong(1, flight_id);
+            ps.setLong(2, flight_id);
+
+            result = ps.executeUpdate();
+
+        }finally {
+            DBManager.releaseConnection(null, ps);
         }
 
         return result;

@@ -36,6 +36,8 @@ public class Flight {
                 formattedPrice);
     }
 
+    public Flight() {
+    }
 
     private String formatDuration(String duration) {
         // duration이 null이거나 비어있으면 빈 문자열 반환
