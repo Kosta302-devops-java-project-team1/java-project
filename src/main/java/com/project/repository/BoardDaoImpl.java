@@ -137,4 +137,107 @@ public class BoardDaoImpl implements BoardDao{
 
 
     }
+
+    @Override
+    public List<Board> findAllBoard() throws SQLException {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        List<Board> list = new ArrayList<>();
+        String sql = "select * from boards order by board_id desc";
+        try {
+            con = DBManager.getConnection();
+            ps = con.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while(rs.next()){
+                Board board = new Board(rs.getLong("board_id"),
+                        rs.getLong("member_id"),
+                        rs.getString("content"),
+                        rs.getString("created_at"),
+                        rs.getString("updated_at"),
+                        rs.getString("event_end_at"),
+                        rs.getInt("is_closed") != 0);
+                list.add(board);
+            }
+        } catch (SQLException e) {
+            throw new SQLException("db 오류");
+        } finally {
+            DBManager.releaseConnection(con, ps, rs);
+        }
+        return list;
+    }
+
+    @Override
+    public Board findOneBoard(long boardId) throws SQLException {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        Board board = null;
+        String sql = "select * from boards where board_id = ?";
+        try {
+            con = DBManager.getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setLong(1, boardId);
+            rs = ps.executeQuery();
+            if(rs.next()){
+                board = new Board(rs.getLong("board_id"),
+                        rs.getLong("member_id"),
+                        rs.getString("content"),
+                        rs.getString("created_at"),
+                        rs.getString("updated_at"),
+                        rs.getString("event_end_at"),
+                        rs.getInt("is_closed") != 0);
+            }
+        } catch (SQLException e) {
+            throw new SQLException("db 오류");
+        } finally {
+            DBManager.releaseConnection(con, ps, rs);
+        }
+        return board;
+    }
+
+    @Override
+    public void deleteBoard(long boardId) throws SQLException {
+        Connection con = null;
+        PreparedStatement ps = null;
+        int result = 0;
+        String sql = "delete from boards where board_id = ?";
+        try {
+            con = DBManager.getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setLong(1, boardId);
+            result = ps.executeUpdate();
+            if(result == 0){
+                throw new SQLException("삭제하지 못함");
+            }
+        } catch (SQLException e) {
+            throw new SQLException("db오류");
+        } finally {
+            DBManager.releaseConnection(con, ps);
+        }
+    }
+
+    @Override
+    public void updateBoard(Board board) throws SQLException {
+        Connection con = null;
+        PreparedStatement ps = null;
+        int result = 0;
+        System.out.println(board.getContent() + board.getEventEndAt() + board.getId());
+        String sql = "update boards set content = ?, updated_at = now(), event_end_at = ? where board_id = ?";
+        try {
+            con = DBManager.getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setString(1, board.getContent());
+            ps.setString(2, board.getEventEndAt());
+            ps.setLong(3, board.getId());
+            result = ps.executeUpdate();
+            if(result == 0){
+                throw new SQLException("수정하지 못함");
+            }
+        } catch (SQLException e) {
+            throw new SQLException("db오류");
+        } finally {
+            DBManager.releaseConnection(con, ps);
+        }
+    }
 }

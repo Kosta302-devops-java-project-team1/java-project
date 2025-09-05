@@ -20,4 +20,33 @@ public interface BoardDao {
      * @throws SQLException
      */
     void insertBoard(long memberId, Board board) throws SQLException;
+
+    /**
+     * 관리자용 메서드. isClosed에 상관없이 모든 글 조회
+     * @return
+     * @throws SQLException
+     */
+    List<Board> findAllBoard() throws SQLException;
+
+    /**
+     * 관리자용 메서드. boardId로 하나의 게시글 조회
+     * @param boardId
+     * @return
+     * @throws SQLException
+     */
+    Board findOneBoard(long boardId) throws SQLException;
+
+    /**
+     * 관리자용 메서드. boardId로 하나의 글 삭제
+     * @param boardId
+     * @throws SQLException
+     */
+    void deleteBoard(long boardId) throws SQLException;
+
+    /**
+     * 관리자용 메서드. View에서 입력받은 값으로 게시글 수정
+     * @param board
+     * @throws SQLException
+     */
+    public void updateBoard(Board board) throws SQLException;
 }
