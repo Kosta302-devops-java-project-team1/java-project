@@ -1,8 +1,12 @@
 package main.java.com.project.repository;
 
 import main.java.com.project.common.DBManager;
+import main.java.com.project.dto.Member;
+import main.java.com.project.dto.Reservation;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 테스트용 클래스(언제든 삭제 수정 가능)
@@ -57,6 +61,89 @@ public class ReservationDaoImpl implements ReservationDao{
         } finally {
             DBManager.releaseConnection(null, ps);
         }
+    }
 
+    @Override
+    public List<Reservation> selectAll() throws SQLException {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        String sql = "select * from reservations order by reservation_id desc";
+        List<Reservation> reservationList = new ArrayList<>();
+
+        try {
+            con = DBManager.getConnection();
+            ps = con.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()){
+                reservationList.add(new Reservation(rs.getLong("reservation_id"),
+                        rs.getLong("member_id"),
+                        rs.getInt("count"),
+                        rs.getInt("total_amount"),
+                        rs.getString("created_at")));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            DBManager.releaseConnection(con, ps, rs);
+        }
+
+        return reservationList;
+    }
+
+    @Override
+    public List<Reservation> selectAllByMemberId(long memberId) throws SQLException {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        String sql = "select * from reservations where member_id = ? order by reservation_id desc";
+        List<Reservation> reservationList = new ArrayList<>();
+        try {
+            con = DBManager.getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setLong(1, memberId);
+            rs = ps.executeQuery();
+            while (rs.next()){
+                reservationList.add(new Reservation(rs.getLong("reservation_id"),
+                        rs.getLong("member_id"),
+                        rs.getInt("count"),
+                        rs.getInt("total_amount"),
+                        rs.getString("created_at")));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            DBManager.releaseConnection(con, ps, rs);
+        }
+
+        return reservationList;
+    }
+
+    @Override
+    public Reservation selectOneByReservationId(long reservationId) throws SQLException {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        String sql = "select * from reservations where reservation_id = ? order by reservation_id desc";
+        Reservation reservation = null;
+        try {
+            con = DBManager.getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setLong(1, reservationId);
+            rs = ps.executeQuery();
+            while (rs.next()){
+                reservation = new Reservation(rs.getLong("reservation_id"),
+                        rs.getLong("member_id"),
+                        rs.getInt("count"),
+                        rs.getInt("total_amount"),
+                        rs.getString("created_at"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            DBManager.releaseConnection(con, ps, rs);
+        }
+
+        return reservation;
     }
 }

@@ -151,4 +151,39 @@ public class FlightDaoImpl implements FlightDao{
 
         return result;
     }
+
+    @Override
+    public Flight findByFlightId(long flightId) throws SQLException {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        String sql="SELECT * FROM flights where flight_id = ?";
+        Flight flight = null;
+        try {
+            con = DBManager.getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setLong(1, flightId);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                flight = new Flight(
+                                rs.getInt(1),       // flights_id
+                                rs.getString(2),    // airline_name
+                                rs.getString(3),    // d_ap
+                                rs.getInt(4),       // d_ter
+                                rs.getString(5),    // d_time
+                                rs.getString(6),    // a_ap
+                                rs.getInt(7),       // a_ter
+                                rs.getString(8),    // a_time
+                                rs.getString(9),    // duration
+                                rs.getInt(10),      // price
+                                rs.getInt(11),      // remain_seat
+                                rs.getString(12)   // last_update
+                        );
+            }
+        } finally {
+            DBManager.releaseConnection(con, ps, rs);
+        }
+
+        return flight;
+    }
 }

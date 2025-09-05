@@ -4,6 +4,7 @@ import main.java.com.project.dto.Flight;
 import main.java.com.project.dto.Member;
 import main.java.com.project.dto.Reservation;
 import main.java.com.project.dto.Ticket;
+import main.java.com.project.exception.AccessDeniedException;
 import main.java.com.project.exception.InsufficientBalanceException;
 import main.java.com.project.exception.MemberNotFoundException;
 import main.java.com.project.service.ReservationService;
@@ -42,6 +43,53 @@ public class ReservationController {
             FailView.errorMessage(e.getMessage());
             throw new RuntimeException(e);
         }
+    }
+
+    public List<Reservation> viewAllReservation(Member member){
+        List<Reservation> reservationList = null;
+        try {
+            reservationList = reservationService.selectAllReservation(member);
+
+        } catch (SQLException | AccessDeniedException e) {
+            FailView.errorMessage(e.getMessage());
+        }
+        return reservationList;
+    }
+
+    public List<Reservation> viewAllMemberReservation(Member member){
+        List<Reservation> reservationList = null;
+        try {
+            reservationList = reservationService.selectMemberReservation(member.getId());
+        } catch (SQLException e) {
+            FailView.errorMessage(e.getMessage());
+        }
+        return reservationList;
+    }
+
+    public Reservation viewOneReservation(long reservationId){
+        Reservation reservation = null;
+        try {
+            reservation = reservationService.selectOneReservation(reservationId);
+        } catch (SQLException e) {
+            FailView.errorMessage(e.getMessage());
+        }
+        return reservation;
+    }
+
+    public List<Ticket> viewAllTicket(Member member){
+        return null;
+    }
+    public List<Ticket> viewMemberAllTicket(long memberId){
+        return null;
+    }
+    public List<Ticket> viewMemberTicket(long reservationId){
+        List<Ticket> tickets = null;
+        try {
+            tickets = reservationService.selectMemberTicket(reservationId);
+        } catch (SQLException e) {
+            FailView.errorMessage(e.getMessage());
+        }
+        return tickets;
     }
 
 }

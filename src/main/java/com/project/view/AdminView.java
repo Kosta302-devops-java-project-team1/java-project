@@ -42,7 +42,7 @@ public class AdminView {
         List<Board> boards = boardController.searchAllBoard();
         int lastPage = (boards.size() / PAGESIZE);
         while(true){
-            CommonPaging.paging(PAGESIZE, currentPage, boards);
+            CommonPaging.paging(PAGESIZE, currentPage, boards, "event");
 
 
             System.out.println("\n메뉴: [0] 이전페이지 [1] 등록 [2] 수정 [3] 삭제 [6] 다음페이지 [9] 이전메뉴");

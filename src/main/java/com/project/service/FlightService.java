@@ -69,6 +69,10 @@ public class FlightService {
         return flights;
     }
 
+    public Flight findByOneFlightId(long flightId) throws SQLException {
+        return flightDao.findByFlightId(flightId);
+    }
+
     private List<Flight> findFlightsFromDB(FlightDto flightDto) throws SQLException {
         return flightDao.findByOriginAndDestinationAndDepartDateAndCheckTime(flightDto.getOrigin(), flightDto.getDestination(), flightDto.getDepartDate());
     }

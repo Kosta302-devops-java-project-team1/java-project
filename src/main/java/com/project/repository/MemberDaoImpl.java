@@ -181,14 +181,6 @@ public class MemberDaoImpl implements MemberDao {
                 con.rollback();
                 throw new SQLException("수정되지 않았습니다.");
             }
-            if(member.getBalance() > 0){
-                result = insertChargeDetail(con, member.getId(), member.getBalance());
-                if(result == 0){
-                    con.rollback();
-                    throw new SQLException("충전내역에 insert되지 못함");
-                }
-            }
-
             updated = findById(con, updated.getId());
         } catch (SQLException e) {
             e.printStackTrace();

@@ -5,6 +5,7 @@ import main.java.com.project.dto.Flight;
 import main.java.com.project.dto.Member;
 import main.java.com.project.dto.Reservation;
 import main.java.com.project.dto.Ticket;
+import main.java.com.project.exception.AccessDeniedException;
 import main.java.com.project.exception.InsufficientBalanceException;
 import main.java.com.project.exception.MemberNotFoundException;
 import main.java.com.project.repository.*;
@@ -75,5 +76,38 @@ public class ReservationServiceImpl implements ReservationService{
         flightDao.updateSeatCount(con, flightId);
         memberDao.updateBalance(con, member);
         return true;
+    }
+
+    @Override
+    public List<Reservation> selectAllReservation(Member member) throws SQLException, AccessDeniedException {
+        if(!member.isAdmin()){
+            throw new AccessDeniedException("관리자가 아닙니다.");
+        }
+        return reservationDao.selectAll();
+    }
+
+    @Override
+    public List<Reservation> selectMemberReservation(long memberId) throws SQLException {
+        return reservationDao.selectAllByMemberId(memberId);
+    }
+
+    @Override
+    public Reservation selectOneReservation(long reservationId) throws SQLException {
+        return reservationDao.selectOneByReservationId(reservationId);
+    }
+
+    @Override
+    public List<Ticket> selectAllTicket(Member member) throws SQLException, AccessDeniedException {
+        return List.of();
+    }
+
+    @Override
+    public List<Ticket> selectMemberTicket(long reservationId) throws SQLException {
+        return ticketDao.selectByReservationId(reservationId);
+    }
+
+    @Override
+    public Ticket selectAllMemberTicket(long memberId) throws SQLException {
+        return null;
     }
 }

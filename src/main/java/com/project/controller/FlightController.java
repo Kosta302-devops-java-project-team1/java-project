@@ -40,6 +40,15 @@ public class FlightController {
         } catch (ResponseException | SQLException e) {
             FlightSearchFailView.errorMessage("서비스 장애가 발생하였습니다." + e.getMessage());
         }
+    }
 
+    public static Flight searchOneFlight(long flightId){
+        Flight flight = null;
+        try {
+            flight = flightService.findByOneFlightId(flightId);
+        } catch (SQLException e) {
+            FlightSearchFailView.errorMessage("서비스 장애가 발생하였습니다." + e.getMessage());
+        }
+        return flight;
     }
 }
